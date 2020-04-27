@@ -4,18 +4,18 @@
 
     <!--World launch file-->
     <!-- Robot pose -->
-    <arg name="x" default="2.016"/>
-    <arg name="y" default="-0.936"/>
+    <arg name="x" default="0"/>
+    <arg name="y" default="0"/>
     <arg name="z" default="0"/>
     <arg name="roll" default="0"/>
     <arg name="pitch" default="0"/>
-    <arg name="yaw" default="-1.57"/>
+    <arg name="yaw" default="0"/>
 
     <!-- Launch other relevant files-->
     <include file="$(find my_robot)/launch/robot_description.launch"/>
 
     <!-- World File -->
-    <arg name="world_file" default="$(find my_robot)/worlds/big_world.world"/>
+    <arg name="world_file" default="$(find my_robot)/worlds/office_pnd.world"/>
 
     <!-- Launch Gazebo World -->
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -39,7 +39,7 @@
 
     <!--amcl launch file-->
     <!-- The map_server node -->
-    <arg name="map_file" default="$(find my_robot)/maps/big_world.yaml"/>
+    <arg name="map_file" default="$(find my_robot)/maps/rtabmap.yaml"/>
     <node name="map_server" type="map_server" pkg="map_server" args="$(arg map_file)">
     </node>
 
@@ -54,13 +54,13 @@
         <param name="global_frame_id" value="map"/>
 
         <!-- If you choose to define initial pose here values are from world.launch -->
-        <param name="initial_pose_x" value="2.016"/>
-        <param name="initial_pose_y" value="-0.936"/>
+        <param name="initial_pose_x" value="0.0"/>
+        <param name="initial_pose_y" value="0.0"/>
        
         
         Tune parameters
-        <param name="min_particles" value="120"/>
-        <param name="max_particles" value="3200"/>
+        <param name="min_particles" value="1200"/>
+        <param name="max_particles" value="5000"/>
         <!--
         <param name="update_min_a" value="pi/6.0"/>
         <param name="update_min_d" value="0.1"/>
