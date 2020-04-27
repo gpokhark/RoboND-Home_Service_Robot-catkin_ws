@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+
+    <!--World launch file-->
+    <!-- Robot pose -->
+    <arg name="x" default="2.016"/>
+    <arg name="y" default="-0.936"/>
+    <arg name="z" default="0"/>
+    <arg name="roll" default="0"/>
+    <arg name="pitch" default="0"/>
+    <arg name="yaw" default="-1.57"/>
+
+    <!-- Launch other relevant files-->
+    <include file="$(find my_robot)/launch/robot_description.launch"/>
+
+    <!-- World File -->
+    <arg name="world_file" default="$(find my_robot)/worlds/big_world.world"/>
+
+    <!-- Launch Gazebo World -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="use_sim_time" value="true"/>
+        <arg name="debug" value="false"/>
+        <arg name="gui" value="true" />
+        <arg name="world_name" value="$(arg world_file)"/>
+    </include>
+
+    <!-- Find my robot Description-->
+    <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find my_robot)/urdf/my_robot.xacro'"/>
+
+    <!-- Spawn My Robot -->
+    <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -param robot_description -model my_robot 
+                  -x $(arg x) -y $(arg y) -z $(arg z)
+                  -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)"/>
+
+    <!--launch rviz-->
+    <node name="rviz" pkg="rviz" type="rviz" respawn="false" args="-d $(find my_robot)/rviz/localization.rviz"/>
+
+
+    <!--amcl launch file-->
+    <!-- The map_server node -->
+    <arg name="map_file" default="$(find my_robot)/maps/big_world.yaml"/>
+    <node name="map_server" type="map_server" pkg="map_server" args="$(arg map_file)">
+    </node>
+
+    <!-- The amcl node -->
+    <node name="amcl" type="amcl" pkg="amcl" output="screen">
+        <!--
+        <remap from="scan" to="my_robot/laser/scan"/>
+        -->
+        <param name="odom_frame_id" value="odom"/>
+        <param name="odom_model_type" value="diff-corrected"/>
+        <param name="base_frame_id" value="robot_footprint"/>
+        <param name="global_frame_id" value="map"/>
+
+        <!-- If you choose to define initial pose here values are from world.launch -->
+        <param name="initial_pose_x" value="2.016"/>
+        <param name="initial_pose_y" value="-0.936"/>
+       
+        
+        Tune parameters
+        <param name="min_particles" value="120"/>
+        <param name="max_particles" value="3200"/>
+        <!--
+        <param name="update_min_a" value="pi/6.0"/>
+        <param name="update_min_d" value="0.1"/>
+        <param name="transform_tolerance" value="0.2"/>
+
+
+        <param name="laser_z_hit" value="0.95"/>
+        <param name="laser_z_rand" value="0.05"/>
+        <param name="laser_min_range" value="0.1"/>
+        <param name="laser_max_range" value="10"/>
+        <param name="laser_max_beams" value="30"/>
+
+
+        <param name="odom_alpha1" value="0.02"/>
+        <param name="odom_alpha2" value="0.02"/>
+        <param name="odom_alpha3" value="0.02"/>
+        <param name="odom_alpha4" value="0.02"/>
+        <param name="odom_alpha5" value="0.02"/>
+        -->
+    </node>
+
+    <!-- The move_base node -->
+    <node name="move_base" type="move_base" pkg="move_base" respawn="false" output="screen">
+        <!--
+        <remap from="scan" to="my_robot/laser/scan"/>
+        -->
+        <param name="base_global_planner" value="navfn/NavfnROS"/>
+        <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS"/>
+        <rosparam file="$(find my_robot)/config/costmap_common_params.yaml" command="load" ns="global_costmap"/>
+        <rosparam file="$(find my_robot)/config/costmap_common_params.yaml" command="load" ns="local_costmap"/>
+        <rosparam file="$(find my_robot)/config/local_costmap_params.yaml" command="load"/>
+        <rosparam file="$(find my_robot)/config/global_costmap_params.yaml" command="load"/>
+        <rosparam file="$(find my_robot)/config/base_local_planner_params.yaml" command="load"/>
+    </node>
+
+</launch>
+
+
