@@ -39,7 +39,7 @@
 
     <!--amcl launch file-->
     <!-- The map_server node -->
-    <arg name="map_file" default="$(find my_robot)/maps/rtabmap.yaml"/>
+    <arg name="map_file" default="$(find my_robot)/maps/office_pnd.yaml"/>
     <node name="map_server" type="map_server" pkg="map_server" args="$(arg map_file)">
     </node>
 
@@ -61,7 +61,7 @@
         Tune parameters
         <param name="min_particles" value="1200"/>
         <param name="max_particles" value="5000"/>
-        <!--
+        
         <param name="update_min_a" value="pi/6.0"/>
         <param name="update_min_d" value="0.1"/>
         <param name="transform_tolerance" value="0.2"/>
@@ -79,7 +79,7 @@
         <param name="odom_alpha3" value="0.02"/>
         <param name="odom_alpha4" value="0.02"/>
         <param name="odom_alpha5" value="0.02"/>
-        -->
+        
     </node>
 
     <!-- The move_base node -->
