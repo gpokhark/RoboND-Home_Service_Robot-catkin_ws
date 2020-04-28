@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # source the ros helper file
-source ros_helpers.sh
+source ./ros_helpers.sh
 
 # 1 launch turtlebot
 roslaunch_xterm turtlebot_gazebo turtlebot_world.launch world_file:=$world_file
